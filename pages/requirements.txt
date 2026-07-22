@@ -1,2 +1,3 @@
 requests
 plotly
+pip install plotly
