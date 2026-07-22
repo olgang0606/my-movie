@@ -3,7 +3,13 @@ import requests
 import pandas as pd
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
-import plotly.express as px
+
+# Plotly 임포트 안정성 처리
+try:
+    import plotly.express as px
+except ImportError:
+    st.error("❌ Plotly 라이브러리가 설치되지 않았습니다. 'pip install plotly' 명령어로 설치 후 다시 실행해주세요.")
+    st.stop()
 
 st.title("📊 어제의 박스오피스 분석 대시보드 (Plotly 확장판)")
 
@@ -85,4 +91,3 @@ else:
     merged["audi_per_show"] = merged["audiCnt"] / merged["showCnt"]
     st.subheader("🎞️ 회차당 평균 관객수")
     st.dataframe(merged[["rank", "movieNm", "audi_per_show"]].sort_values("audi_per_show", ascending=False))
-
