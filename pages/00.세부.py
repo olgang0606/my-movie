@@ -10,7 +10,7 @@ import plotly.express as px
 # 🎬 박스오피스 대시보드 (어제 기준 + 증감률)
 # -------------------------------
 
-st.title("📊 어제의 박스오피스 분석 대시보드 (증감률 포함)")
+st.title("📊 어제의 박스오피스 분석 대시보드 (Plotly 확장판)")
 
 # ✅ 한국 시간(Asia/Seoul) 기준으로 날짜 계산
 seoul_tz = ZoneInfo("Asia/Seoul")
@@ -53,7 +53,7 @@ else:
     df_yesterday = df_yesterday[["rank", "movieNm", "openDt", "audiCnt", "audiAcc", "scrnCnt", "showCnt"]]
     df_daybefore = df_daybefore[["movieNm", "audiCnt"]]
 
-    # ✅ 전일 대비 증감률 계산 (영화명 기준 매칭)
+    # ✅ 전일 대비 증감률 계산
     merged = pd.merge(df_yesterday, df_daybefore[["movieNm", "audiCnt"]],
                       on="movieNm", how="left", suffixes=("", "_prev"))
     merged["audiDiff"] = merged["audiCnt"] - merged["audiCnt_prev"]
@@ -74,7 +74,7 @@ else:
     fig_top5.update_traces(texttemplate="%{text:,}명", textposition="outside")
     st.plotly_chart(fig_top5, use_container_width=True)
 
-    # ✅ 1위 영화 지표 카드 (증감률 포함)
+    # ✅ 1위 영화 지표 카드
     st.subheader("🏆 어제의 1위 영화")
     first_movie = merged[merged["rank"] == 1].iloc[0]
     st.metric(
