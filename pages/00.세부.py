@@ -3,7 +3,7 @@ import requests
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
-import pytz
+from zoneinfo import ZoneInfo
 import plotly.express as px
 
 # -------------------------------
@@ -13,7 +13,7 @@ import plotly.express as px
 st.title("📊 어제의 박스오피스 분석 대시보드 (증감률 포함)")
 
 # ✅ 한국 시간(Asia/Seoul) 기준으로 날짜 계산
-seoul_tz = pytz.timezone("Asia/Seoul")
+seoul_tz = ZoneInfo("Asia/Seoul")
 today_seoul = datetime.now(seoul_tz).date()
 yesterday_seoul = today_seoul - timedelta(days=1)
 day_before_seoul = today_seoul - timedelta(days=2)
@@ -26,6 +26,7 @@ url = "http://www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDaily
 api_key = st.secrets["KOBIS_KEY"]
 
 def fetch_data(targetDt):
+    """API에서 박스오피스 데이터를 불러오는 함수"""
     params = {"key": api_key, "targetDt": targetDt}
     response = requests.get(url, params=params)
     if response.status_code != 200:
@@ -50,7 +51,7 @@ else:
 
     # 필요한 컬럼만
     df_yesterday = df_yesterday[["rank", "movieNm", "openDt", "audiCnt", "audiAcc", "scrnCnt", "showCnt"]]
-    df_daybefore = df_daybefore[["rank", "movieNm", "audiCnt"]]
+    df_daybefore = df_daybefore[["movieNm", "audiCnt"]]
 
     # ✅ 전일 대비 증감률 계산 (영화명 기준 매칭)
     merged = pd.merge(df_yesterday, df_daybefore[["movieNm", "audiCnt"]],
@@ -60,8 +61,10 @@ else:
 
     # ✅ 표 출력
     st.subheader("🎥 박스오피스 순위표 (증감률 포함)")
-    st.dataframe(merged[["rank", "movieNm", "openDt", "audiCnt", "audiAcc", "scrnCnt", "audiDiff", "audiRate"]],
-                 use_container_width=True)
+    st.dataframe(
+        merged[["rank", "movieNm", "openDt", "audiCnt", "audiAcc", "scrnCnt", "audiDiff", "audiRate"]],
+        use_container_width=True
+    )
 
     # ✅ 관객수 TOP 5 (Plotly)
     st.subheader("👥 관객수 TOP 5")
