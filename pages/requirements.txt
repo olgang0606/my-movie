@@ -1,3 +1,4 @@
 requests
 pytz
 plotly
+pip install pytz
