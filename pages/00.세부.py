@@ -85,3 +85,4 @@ else:
     merged["audi_per_show"] = merged["audiCnt"] / merged["showCnt"]
     st.subheader("🎞️ 회차당 평균 관객수")
     st.dataframe(merged[["rank", "movieNm", "audi_per_show"]].sort_values("audi_per_show", ascending=False))
+
